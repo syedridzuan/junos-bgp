@@ -1,0 +1,23 @@
+---
+- name: Get Device Facts
+  hosts: HAN
+  connection: local
+  gather_facts: no
+  vars:
+    credential:
+     host:"{{ ansible_ssh_host }}"
+     port:"{{ netconf_port }}"
+     username:"{{ ansible_ssh_user }}"
+     password:"{{ ansible_ssh_pass }}"
+
+  tasks:
+  - name: Checking NETCONF connectivity
+    wait_for: host={{ ansible_ssh_host }} port={{ netconf_port }} timeout=5
+ 
+  - name: Retrieve Information from Device runnung Junos OS
+    junos_facts: 
+     host: "{{ ansible_ssh_host }}"
+     provider: "{{ credential }}"
+     config: no
+    register: junos
+    

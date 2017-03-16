@@ -1,0 +1,32 @@
+- name: Get Device Facts
+  hosts: HAN
+  connection: local
+  gather_facts: no
+  vars:
+    credential:
+        host: "{{ ansible_ssh_host }}"
+        port: "{{ netconf_port }}"
+        username: "{{ ansible_ssh_user }}"
+        password: "{{ ansible_ssh_pass }}"
+
+  tasks:
+  - name: Checking NETCONF connectivity
+    wait_for: host={{ ansible_ssh_host }} port={{ netconf_port }} timeout=5
+    
+    
+  #task 2 get info
+  - name: Retrieve info fr. devices running Junos OS
+    junos_facts: 
+     host: "{{ ansible_ssh_host }}"
+     provider: "{{ credential }}"
+     config: no
+    register: junos
+    
+
+  - name: Sh Version
+    debug: msg="Router {{ inventory_hostname }} is running {{ version }} and model {{ model }}"
+    
+  
+  - name: Check for master RE
+    debug: msg="Master RE is {{ master }} RE being up for {{ master}}"
+    
